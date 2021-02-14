@@ -160,8 +160,272 @@ def sol_ineq(ineq):
     txt=txt.replace(")","[")
     return formate(txt1),formate(txt)
 
+def borne_intervalle(i):
+    t=[]
+    if i.is_EmptySet:
+        return t
+    else:
+        if i.inf==-oo:
+            t.append(-oo)
+        for n in i.boundary:
+            t.append(n)
+        if i.sup==oo:
+            t.append(+oo)
+        return t
 
-	    
+def liste_x_signe(f,a,b):
+    var=variable(f)
+    f=factor(sympify(f))
+    bornes_plus=borne_intervalle(solve_univariate_inequality(f>0,var, relational=False).intersect(Interval(a,b)))
+    bornes_moins=borne_intervalle(solve_univariate_inequality(f < 0, var, relational=False).intersect(Interval(a,b)))
+    tab=list(set(bornes_plus+bornes_moins))
+    return(sorted(tab))
+
+
+def signe_f(f,a,b):
+    var=variable(f)
+    f=factor(sympify(f))
+    I=solve_univariate_inequality(f>0,var, relational=False).intersect(Interval(a,b))
+    if I.is_EmptySet:
+        return "-"
+    else:
+        return "+"
+
+
+def est_val_interdite(f,a):
+    var=variable(f)
+    f=sympify(f)
+    bool=True
+    if a==oo or a==-oo:
+        image=limit(f,var,a)
+    else:
+        image=f.subs(var,a)
+    try :
+        if image!=zoo:
+            bool=False
+    except:
+        if  image.is_real :
+            bool= False
+    return bool
+
+
+def tabsigne(f,a,b):
+        var=variable(f)
+        f=saisie_fonction(f)
+        f1=sympify(f)
+        txt="\n \\begin{tikzpicture}"
+        txt+="\n \\tkzTabInit{$"+latex(var)+"$ / 1 , $f("+latex(var)+")$ / 1}{"
+        L=liste_x_signe(f,a,b)
+        for i in L:
+            txt+="$"+signe_infini(latex(i))+"$,"
+        txt=txt[:-1]+"}"
+        txt+="\n \\tkzTabLine{,"
+        for i in range(len(L[:-1])):
+            txt+=signe_f(f,L[i],L[i+1])+","
+            if i!=len(L[:-1])-1:
+                if est_val_interdite(f,L[i+1]):
+                    txt+="d,"
+                else:
+                    txt+="z,"
+        txt+="}\\end{tikzpicture}"
+        return formate(txt)
+
+def ecrire_sys(gauche1,droite1,gauche2,droite2):
+
+    txt="$\\left \\{\\begin{matrix}"
+    txt+=latex(gauche1)+" = "+latex(droite1)+"\\\\"
+    txt+=latex(gauche2)+" = "+latex(droite2)
+    txt+="\\end{matrix}\\right.$"
+    return txt
+
+def systeme_combi(x,y,a1,b1,c1,a2,b2,c2):
+    x=Symbol(x)
+    y=Symbol(y)
+    gauche1,droite1=sympify(a1*x+b1*y),c1
+    gauche2,droite2=sympify(a2*x+b2*y),c2
+    txt=ecrire_sys(gauche1,droite1,gauche2,droite2)
+    a,b=abs(lcm(a1,a2)),abs(lcm(b1,b2))
+    if abs(a1)!=abs(a2) and abs(b1)!=abs(b2):
+        if a==a1 or a==a2:
+            d1,d2=abs(int(a/a1)),abs(int(a/a2))
+        else:
+            d1,d2=abs(int(b/b1)),abs(int(b/b2))
+
+        gauche1,droite1=d1*gauche1,d1*droite1
+        gauche2,droite2=d2*gauche2,d2*droite2
+        txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+
+    if a1*b2-a2*b1==0:
+        if a1*c2-c1*a2==0:
+            txt+="Le système admet une infinité de solutions"
+        else:
+            txt+="Le système n'admet pas de solution"
+
+    else:
+        if LC(gauche1,x)==LC(gauche2,x) or LC(gauche1,y)==LC(gauche2,y):
+            gauche2,droite2=gauche1-gauche2,droite1-droite2
+        else:
+            gauche2,droite2=gauche1+gauche2,droite1+droite2
+        txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+        gauche2,droite2=gauche2/LC(gauche2),Rational(droite2,LC(gauche2))
+        txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+        if LC(gauche2,x)==1:
+            gauche1=gauche1.replace(x,droite2)
+        else:
+            gauche1=gauche1.replace(y,droite2)
+        txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+        droite1=Rational(droite1-gauche1.replace(LM(gauche1),0),LC(gauche1))
+        gauche1=LM(gauche1)
+        txt+="\\\\$ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+        if LM(gauche1)==x:
+            txt+="\\\\ $S=\\left\\lbrace \\left("+latex(droite1)+" ; "+latex(droite2)+"\\right) \\right\\rbrace$"
+        else:
+            txt+="\\\\$S=\\left\\lbrace \\left("+latex(droite2)+" ; "+latex(droite1)+"\\right) \\right\\rbrace$"
+    return formate(txt)
+
+
+
+
+
+def systeme_substi(x,y,a1,b1,c1,a2,b2,c2):
+    x=Symbol(x)
+    y=Symbol(y)
+    gauche1,droite1=sympify(a1*x+b1*y),c1
+    gauche2,droite2=sympify(a2*x+b2*y),c2
+    txt=ecrire_sys(gauche1,droite1,gauche2,droite2)
+    if a1==1:
+        cas=1
+        droite1=c1-b1*y
+        gauche1=x
+        gauche2=Add(b2*y,Mul(a2,c1-b1*y,evaluate=false),evaluate=false)
+    elif b1==1:
+        cas=2
+        droite1=c1-a1*x
+        gauche1=y
+        gauche2=Add(a2*x,Mul(b2,c1-a1*x,evaluate=false),evaluate=false)
+    elif a2==1:
+        cas=3
+        droite2=c2-b2*y
+        gauche2=x
+        gauche1=Add(b1*y,Mul(a1,c2-b2*y,evaluate=false),evaluate=false)
+    elif b2==1:
+        cas=4
+        droite2=c2-a2*x
+        gauche2=y
+        gauche1=Add(a1*x,Mul(b1,c2-a2*x,evaluate=false),evaluate=false)
+
+    else:
+        cas=5
+        if b1!=0:
+            droite1=(c1-a1*x)/b1
+            gauche1=y
+            gauche2=Add(a2*x,Mul(b2,(c1-a1*x)/b1,evaluate=false),evaluate=false)
+        else:
+            droite1=c1/a1
+            gauche1=x
+            gauche2=a2*c1/a1+b1*y
+
+    txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+    gauche1bis=simplify(gauche1)
+    gauche2bis=simplify(gauche2)
+    if gauche1bis!=gauche1 or gauche2bis!=gauche2:
+        txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1bis,droite1,gauche2bis,droite2)
+    if degree(gauche1bis)!=1:
+        if gauche1bis==droite1:
+            txt+="Le système admet une infinité de solutions"
+        else:
+            txt+="Le système n'admet pas de solutions"
+    elif degree(gauche2bis)!=1:
+        if gauche2bis==droite2:
+            txt+="Le système admet une infinité de solutions"
+        else:
+            txt+="Le système n'admet pas de solutions"
+    else:
+        if cas==1:
+            gauche1=gauche1bis
+            droite2=solve(gauche2bis-droite2,y)[0]
+            gauche2=y
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            droite1=droite1.replace(y,droite2)
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            txt+="\\\\ $S=\\left\\lbrace \\left("+latex(droite1)+" ; "+latex(droite2)+" \\right) \\right\\rbrace$"
+        if cas==2 or cas==5:
+            gauche1=gauche1bis
+            droite2=solve(gauche2bis-droite2,x)[0]
+            gauche2=x
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            droite1=droite1.replace(x,droite2)
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            txt+="\\\\ $S=\\left\\lbrace \\left("+latex(droite2)+" ; "+latex(droite1)+" \\right) \\right\\rbrace$"
+        if cas==3:
+            gauche2=gauche2bis
+            droite1=solve(gauche1bis-droite1,y)[0]
+            gauche1=y
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            droite2=droite2.replace(y,droite1)
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            txt+="\\\\ $S=\\left\\lbrace\\left ("+latex(droite2)+" ; "+latex(droite1)+" \\right) \\right\\rbrace$"
+        if cas==4:
+            gauche2=gauche2bis
+            droite1=solve(gauche1bis-droite1,x)[0]
+            gauche1=x
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            droite2=droite2.replace(x,droite1)
+            txt+="\\\\ $ \\Leftrightarrow $ "+ecrire_sys(gauche1,droite1,gauche2,droite2)
+            txt+="\\\\ $S=\\left\\lbrace \\left("+latex(droite1)+" ; "+latex(droite2)+" \\right) \\right\\rbrace$"
+    return formate(txt)        
+                
+
+def coefficients(p):
+    c=p.subs(x,0)
+    p=expand((p-c)/x)
+    b=p.subs(x,0)
+    p=expand((p-b)/x)
+    a= p.subs(x,0)
+    return a,b,c
+
+def est_un_carre(x):
+    y=sqrt(x)
+    return y==int(y)
+
+def eq_trinome(p,ensemble):
+    p=sympify(saisie_fonction(p))
+    a,b,c=coefficients(p)
+    d=b**2-4*a*c
+    txt="$\\Delta=b^2-4ac="+parenthese(b)+"^2-"+"4\\times"+parenthese(a)+" \\times"+parenthese(c)+"="+latex(d)+"$\\\\"
+    if ensemble=="R":
+        if discriminant(p)<0:
+            txt+="$\\Delta<0$ donc l'équation $"+latex(p)+"=0 $"+ " n'admet pas de solution \\\\"
+        elif discriminant(p)==0:
+            txt+="$\\Delta=0$ donc l'équation $ "+latex(p)+ "=0$ admet une unique solution : \\\\"
+            txt+="$x_0=\\frac{-b}{2a}=\\dfrac{"+latex(-b)+"}{"+latex(2*a)+"}="+latex(-b/(2*a))+" \\\\$"
+        else:
+            txt+="$\\Delta>0 $ donc l'équation $"+latex(p)+ "=0$ admet deux solutions réelles :\\\\"
+            txt+="$x_1=\\frac{-b-\sqrt{\\Delta}}{2a}=\\dfrac{-"+parenthese(b)+"-\\sqrt{"+latex(d)+"}"+"}{2\\times"+parenthese(a)+"}="
+            txt+="\\frac{"+latex(-b-sqrt(d))+"}{"+latex(2*a)+"}="
+            txt+=latex((-b-sqrt(d))/(2*a))+"$\\\\"
+            txt+="$x_2=\\frac{-b+\sqrt{\\Delta}}{2a}=\\dfrac{-"+parenthese(b)+"+\\sqrt{"+latex(d)+"}"+"}{2\\times"+parenthese(a)+"}="
+            txt+="\\frac{"+latex(-b+sqrt(d))+"}{"+latex(2*a)+"}="
+            txt+=latex((-b+sqrt(d))/(2*a))+"$\\\\"
+    else:
+        if discriminant(p)<0:
+             txt+="$\\Delta<0$ donc l'équation $"+latex(p.subs(x,z))+"=0$ "+ " admet deux solutions complexes conjuguées :\\\\"
+             txt+="$z_1=\\frac{-b-{i}\\sqrt{\\Delta}}{2a}=\\dfrac{-"+parenthese(b)+"-{i}\\sqrt{"+str(-d)+"}}"+"{2\\times"+parenthese(a)+"}="
+             txt+=latex((-b-sqrt(d))/(2*a))+"$\\\\"
+             txt+="et $z_2=\\overline{z_1}="
+             txt+=latex((-b+sqrt(d))/(2*a))+"$\\\\"
+        elif discriminant(p)==0:
+            txt+="$\\Delta=0$ donc l'équation $ "+latex(p.subs(x,z))+ "=0$ admet une unique solution : \\\\"
+            txt+="$z_0=\\frac{-b}{2a}=\\dfrac{"+latex(-b)+"}{"+latex(2*a)+"}="+latex(-b/(2*a))+" \\\\$"
+        else:
+            txt+="$\\Delta>0 $ donc l'équation $"+latex(p.subs(x,z))+ "=0$ admet deux solutions réelles :\\\\"
+            txt+="$z_1=\\frac{-b+\sqrt{\\Delta}}{2a}=\\dfrac{-"+parenthese(b)+"+\\sqrt{"+latex(d)+"}"+"}{2\\times"+parenthese(a)+"}="
+            txt+="\\frac{"+latex(-b+sqrt(d))+"}{"+latex(2*a)+"}="
+            txt+=latex((-b+sqrt(d))/(2*a))+"$\\\\"
+            txt+="$z_2=\\frac{-b-\sqrt{\\Delta}}{2a}=\\dfrac{-"+parenthese(b)+"-\\sqrt{"+latex(d)+"}"+"}{2\\times"+parenthese(a)+"}="
+            txt+="\\frac{"+latex(-b-sqrt(d))+"}{"+latex(2*a)+"}="
+            txt+=latex((-b-sqrt(d))/(2*a))+"$\\\\"
+    return formate(txt)	    
 
 	
 \end{pycode}
