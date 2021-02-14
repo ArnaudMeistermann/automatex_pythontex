@@ -1,0 +1,104 @@
+\begin{pycode}
+from sympy import *
+x, y, z, t ,h,q,a,b,c,d = symbols('x y z t h q a b c d')
+
+def saisie_fonction(txt):
+    liste=['x','a','b','y','z','q','e','i','ln','n','\pi','t','sqrt','(']
+    liste2=["a","b",'y','x','n','t','q','z']
+
+    for i in range(0,10):
+        for lettre in liste:
+            txt=txt.replace(str(i)+lettre,str(i)+"*"+lettre)
+
+    txt=txt.replace(")(",")*(")
+    txt=txt.replace("ln","log")
+    for lettre in liste2:
+        if lettre!="t" or "sqrt" not in txt:
+            txt=txt.replace(lettre+"(",lettre+"*(")
+        txt=txt.replace(")"+lettre,")*"+lettre)
+        txt=txt.replace("e^"+lettre,"exp("+lettre+")")
+    txt=txt.replace("i","I")
+    txt=txt.replace("e^","exp")
+    txt=txt.replace("^","**")
+    txt=txt.replace("{","(")
+    txt=txt.replace("}",")")
+    txt=txt.replace(" ","")
+    txt=txt.replace(")sqrt",")*sqrt")
+    txt=txt.replace(")e",")*e")
+    txt=txt.replace(")log",")*log")
+    txt=txt.replace("over","/")
+
+    return (txt)
+
+
+def formate(txt):
+    txt=txt.replace("\\frac","\\dfrac")
+    if not("left" in txt):
+        txt=txt.replace("(","\\left(")
+    if not "right" in txt:
+        txt=txt.replace(")","\\right)")
+    txt=txt.replace("\\equiv","\\Leftrightarrow")
+    txt=txt.replace("\\infty","+\\infty")
+    txt=txt.replace("log",'ln')
+    txt=txt.replace("--","+")
+    txt=txt.replace("+-","-")
+    txt=txt.replace("-+","-")
+    txt=txt.replace("++","+")
+    txt=txt.replace("\\vec","\\overrightarrow")
+    txt=txt.replace(">="," \\ge ")
+    txt=txt.replace("<="," \\le ")
+    return txt
+
+def change_signe(txt):
+    txt=txt.replace("+","plus")
+    txt=txt.replace("-","+")
+    txt=txt.replace("plus","-")
+    return txt
+
+def signe_infini(a):
+    if a=="\\infty":
+        return "+"+a
+    else:
+        return a
+
+
+def signeplus(fonction):
+    func=latex(fonction)
+    if func[0]!="-":
+        return "+"
+    else:
+        return ""
+
+def ajouteplus(nbre):
+    if nbre>=0:
+        return "+"+latex(nbre)
+    else:
+        return latex(nbre)
+        
+def parenthese(nbre):
+    if nbre<0:
+        return "("+latex(nbre)+")"
+    else:
+        return latex(nbre)
+
+def variable(fonction):
+    var=Symbol("x")
+    if ("n" in fonction) and ("ln" not in fonction):
+        var=Symbol("n")
+    if "t" in fonction and "sqrt" not in fonction:
+        var=Symbol("t")
+    if "q" in fonction and "sqrt" not in fonction:
+        var=Symbol("q")
+    if "p" in fonction and "exp" not in fonction:
+        var=Symbol("p")
+    return var
+
+def str2list(txt):
+    L1=txt.split()
+    L2=[]
+    for elt in L1:
+        L2.append(float(elt))
+    return L2
+
+
+\end{pycode}

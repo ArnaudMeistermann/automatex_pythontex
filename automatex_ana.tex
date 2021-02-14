@@ -1,0 +1,72 @@
+\begin{pycode}
+def borne_intervalle(i):
+    t=[]
+    if i.is_EmptySet:
+        return t
+    else:
+        if i.inf==-oo:
+            t.append(-oo)
+        for n in i.boundary:
+            t.append(n)
+        if i.sup==oo:
+            t.append(+oo)
+        return t
+
+def liste_x_signe(f,a,b):
+    var=variable(f)
+    f=factor(sympify(f))
+    bornes_plus=borne_intervalle(solve_univariate_inequality(f>0,var, relational=False).intersect(Interval(a,b)))
+    bornes_moins=borne_intervalle(solve_univariate_inequality(f < 0, var, relational=False).intersect(Interval(a,b)))
+    tab=list(set(bornes_plus+bornes_moins))
+    return(sorted(tab))
+
+
+def signe_f(f,a,b):
+    var=variable(f)
+    f=factor(sympify(f))
+    I=solve_univariate_inequality(f>0,var, relational=False).intersect(Interval(a,b))
+    if I.is_EmptySet:
+        return "-"
+    else:
+        return "+"
+
+
+def est_val_interdite(f,a):
+    var=variable(f)
+    f=sympify(f)
+    bool=True
+    if a==oo or a==-oo:
+        image=limit(f,var,a)
+    else:
+        image=f.subs(var,a)
+    try :
+        if image!=zoo:
+            bool=False
+    except:
+        if  image.is_real :
+            bool= False
+    return bool
+
+
+def tabsigne(f,a,b):
+        var=variable(f)
+        f=saisie_fonction(f)
+        f1=sympify(f)
+        txt="\n \\begin{tikzpicture}"
+        txt+="\n \\tkzTabInit{$"+latex(var)+"$ / 1 , $f("+latex(var)+")$ / 1}{"
+        L=liste_x_signe(f,a,b)
+        for i in L:
+            txt+="$"+signe_infini(latex(i))+"$,"
+        txt=txt[:-1]+"}"
+        txt+="\n \\tkzTabLine{,"
+        for i in range(len(L[:-1])):
+            txt+=signe_f(f,L[i],L[i+1])+","
+            if i!=len(L[:-1])-1:
+                if est_val_interdite(f,L[i+1]):
+                    txt+="d,"
+                else:
+                    txt+="z,"
+        txt+="}\\end{tikzpicture}"
+        return formate(txt)
+
+\end{pycode}

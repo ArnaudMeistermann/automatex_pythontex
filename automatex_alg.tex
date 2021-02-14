@@ -1,0 +1,167 @@
+\begin{pycode}
+x, y, z, t ,h,q,a,b,c= symbols('x y z t h q a b c')
+
+
+def equation_degre1(gauche,droite,symbole):
+    gauche=saisie_fonction(gauche)
+    droite=saisie_fonction(droite)
+    var=variable(gauche)
+    g=sympify(gauche)
+    d=sympify(droite)
+    if symbole !="=":
+        ineq=sympify(gauche+symbole+droite)
+
+    if (degree(d-g,var)>1) or degree(d-g,var)==0:
+        txt="Ce n'est pas une équation ou une inéquation du premier degré"
+    else:
+        txt="$"+latex(g)+symbole+latex(d)+"$\\\\"
+        g1=sympify(gauche)
+        d1=sympify(droite)
+        if (latex(g)!=latex(g1) or latex(d)!=latex(d1)):
+            txt+="$ \\Leftrightarrow "+latex(g1)+symbole+latex(d1)+"$\\\\"
+
+        g2=g1-g1.replace(var,0)
+        d2=d1
+        if degree(d,var)==1:
+            d2=d1-LT(d1)
+
+        if degree(d,var)!=0 or g.replace(var,0)!=0:
+            txt+="$ \\Leftrightarrow "+latex(g2)
+            if degree(d,var)==1:
+                txt+="-"+latex(LT(d1))
+            txt+=symbole+latex(d2)
+            if g1.replace(var,0)!=0:
+                txt+="-"+latex(g1.replace(var,0))
+            txt+="$\\\\"
+
+            if degree(d,var)==1:
+                g2=g2-LT(d1)
+            d2=d2-g1.replace(var,0)
+            txt+="$ \\Leftrightarrow "+latex(g2)+symbole+latex(d2)+"$\\\\"
+        if degree(g2,var)!=1:
+            if symbole=="=":
+                if d2==0:
+                    txt1="L'ensemble solution est : $S=\\mathbb{R}$"
+                else:
+                    txt1="L'ensemble solution est : $S=\\emptyset$"
+            else:
+                txt1="L'ensemble solution est : $S="+latex(solve_univariate_inequality(ineq,var,relational=False))+"$"
+        else:
+            if LC(g2)<0:
+                if ">" in symbole:
+                    symbole=symbole.replace(">","<")
+                else:
+                    symbole=symbole.replace("<",">")
+            if LC(g-d)!=1:
+                txt+="$ \\Leftrightarrow "+latex(g2/LC(g2))+symbole+"\\dfrac{"+latex(d2)+"}{"+latex(LC(g2))+"}$\\\\"
+                if latex(d2/LC(g2))!="\\frac{"+latex(d2)+"}{"+latex(LC(g2))+"}":
+                    txt+="$ \\Leftrightarrow "+latex(g2/LC(g2))+symbole+latex(d2/LC(g2))+"$\\\\"
+            if symbole=="=":
+                txt1="L'ensemble solution est S=$\\left\\{"+latex(d2/LC(g2))+"\\right\\}$"
+            else:
+
+                sol=latex(solve_univariate_inequality(ineq,var,relational=False))
+                sol=sol.replace("(","]")
+                sol=sol.replace(")","[")
+                txt1="L'ensemble solution est S=$"+sol+"$"
+
+
+    return(formate(txt),formate(txt1))
+
+
+def tableau_signe_produit(f1,f2):
+    f1,f2=sympify(saisie_fonction(f1)),sympify(saisie_fonction(f2))
+    a1,b1=LC(f1),f1.replace(x,0)
+    a2,b2=LC(f2),f2.replace(x,0)
+    alpha1,alpha2=-b1/a1,-b2/a2
+    ligne0="$-\\infty$, $"+latex(alpha1)+"$, $"+latex(alpha2)+"$, $+\\infty$"
+    ligne1=" ,-,z,+,t,+, "
+    ligne2=" ,-,t,-,z,+,"
+    ligne3=" ,+,z,-,z,+, "
+    if alpha1>alpha2:
+        ligne0="$-\\infty$, $"+latex(alpha2)+"$, $"+latex(alpha1)+"$, $+\\infty$"
+        ligne1,ligne2=ligne2,ligne1
+    if a1<0:
+        ligne1=change_signe(ligne1)
+        ligne3=change_signe(ligne3)
+    if a2<0:
+        ligne2=change_signe(ligne2)
+        ligne3=change_signe(ligne3)
+
+    f1=latex(a1)+"x+"+latex(b1)
+    f2=latex(a2)+"x+"+latex(b2)
+    f1f2="("+f1+")("+f2+")"
+    txt="\\resizebox{.7\\textwidth}{!}{"
+    txt+="\\begin{tikzpicture}"
+    txt+="\\tkzTabInit[lgt=5]{$x$ / 1 , $"+f1+"$ / 1,$"+f2+"$ / 1,$"+f1f2+"$ / 1 }{"+ligne0+"}"
+    txt+="\\tkzTabLine{"+ligne1+"}"
+    txt+="\\tkzTabLine{"+ligne2+"}"
+    txt+="\\tkzTabLine{"+ligne3+"}"
+    txt+="\\end{tikzpicture}}"
+    return formate(txt)
+
+def tableau_signe_quotient(f1,f2):
+    f1,f2=sympify(saisie_fonction(f1)),sympify(saisie_fonction(f2))
+    a1,b1=LC(f1),f1.replace(x,0)
+    a2,b2=LC(f2),f2.replace(x,0)
+    alpha1,alpha2=-b1/a1,-b2/a2
+    ligne0="$-\\infty$, $"+latex(alpha1)+"$, $"+latex(alpha2)+"$, $+\\infty$"
+    ligne1=" ,-,z,+,t,+, "
+    ligne2=" ,-,t,-,z,+,"
+    ligne3=" ,+,z,-,d,+,"
+    if alpha1>alpha2:
+        ligne0="$-\\infty$, $"+latex(alpha2)+"$, $"+latex(alpha1)+"$, $+\\infty$"
+        ligne1,ligne2=ligne2,ligne1
+        ligne3=" ,+,d,-,z,+, "
+
+    if a1<0:
+        ligne1=change_signe(ligne1)
+        ligne3=change_signe(ligne3)
+    if a2<0:
+        ligne2=change_signe(ligne2)
+        ligne3=change_signe(ligne3)
+    f1=latex(a1)+"x+"+latex(b1)
+    f2=latex(a2)+"x+"+latex(b2)
+    f1f2="\\dfrac{"+f1+"}{"+f2+"}"
+    txt="\\resizebox{.7\\textwidth}{!}{"
+    txt+="\\begin{tikzpicture}"
+    txt+="\\tkzTabInit[lgt=3]{$x$ / 1 , $"+f1+"$ / 1,$"+f2+"$ / 1,$"+f1f2+"$ / 1 }{"+ligne0+"}"
+    txt+="\\tkzTabLine{"+ligne1+"}"
+    txt+="\\tkzTabLine{"+ligne2+"}"
+    txt+="\\tkzTabLine{"+ligne3+"}"
+    txt+="\\end{tikzpicture}}"
+    return formate(txt)
+
+def ineq_produit(f1,f2,symbole):
+    f1,f2=saisie_fonction(f1),saisie_fonction(f2)
+    txt=equation_degre1(f1,"0",'>')[0].replace("\\\\","")+"\\\\"
+    txt+=equation_degre1(f2,"0",'>')[0].replace("\\\\","")+"\\\\"
+    txt+="On obtient ainsi le tableau suivant : \\\\"
+    txt+=tableau_signe_produit(f1,f2)+"\\\\"
+    f="("+latex(f1)+")*("+latex(f2)+")"
+    txt+=sol_ineq(f+symbole+"0")[0]+sol_ineq(f+symbole+"0")[1]
+    return txt
+
+def ineq_quotient(f1,f2,symbole):
+    f1,f2=saisie_fonction(f1),saisie_fonction(f2)
+    txt=equation_degre1(f1,"0",'>')[0].replace("\\\\","")+"\\\\"
+    txt+=equation_degre1(f2,"0",'>')[0].replace("\\\\","")+"\\\\"
+    txt+="On obtient ainsi le tableau suivant : \\\\"
+    txt+=tableau_signe_quotient(f1,f2)+"\\\\"
+    f="("+latex(f1)+")/("+latex(f2)+")"
+    txt+=sol_ineq(f+symbole+"0")[0]+sol_ineq(f+symbole+"0")[1]
+    return txt
+
+def sol_ineq(ineq):
+    ineq=sympify(saisie_fonction(ineq))
+    txt1="L'ensemble solution de $"+latex(ineq)+"$ est "
+    txt="$"+latex(solve_univariate_inequality(ineq,x,relational=False))+"$"
+    txt=txt.replace("(","]")
+    txt=txt.replace(")","[")
+    return formate(txt1),formate(txt)
+
+
+	    
+
+	
+\end{pycode}

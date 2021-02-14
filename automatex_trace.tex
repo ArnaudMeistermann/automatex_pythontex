@@ -1,0 +1,69 @@
+\begin{pycode}
+
+def trace_fonct_affine(f,g,h,k,xmin,xmax,ymin,ymax):
+    if f:
+        f1=sympify(f)
+        if f1.replace(x,xmax)<ymax and f1.replace(x,xmax)>ymin:
+            yf=f1.replace(x,xmax)
+            xf=xmax
+        else:
+            xf=solve([f1-xmax,x<xmax],x).rhs
+            yf=f1.replace(x,xf)
+            xf=xf+0.5
+    if g:
+        g1=sympify(g)
+        if g1.replace(x,xmax)<ymax and g1.replace(x,xmax)>ymin:
+            yg=g1.replace(x,xmax)+0.5
+            xg=xmax-0.5
+        else:
+            xg=solve([g1-xmax,x<xmax],x).rhs
+            yg=g1.replace(x,xg)
+            xg=xg+0.5
+    if h:
+        h1=sympify(h)
+        if h1.replace(x,xmax)<ymax and h1.replace(x,xmax)>ymin:
+            yh=h1.replace(x,xmax)+0.5
+            xh=xmax-0.5
+        else:
+            xh=solve([h1-xmax,x<xmax],x).rhs
+            yh=h1.replace(x,xh)
+            xh=xh+0.5
+    if k:
+        k1=sympify(k)
+        if k1.replace(x,xmax)<ymax and k1.replace(x,xmax)>ymin:
+            yk=k1.replace(x,xmax)+0.5
+            xk=xmax-0.5
+        else:
+            xk=solve([k1-xmax,x<xmax],x).rhs
+            yk=k1.replace(x,xk)
+            xk=xk+0.5
+
+    txt="\\begin{tikzpicture}"
+    txt+="\\begin{axis}[grid=both,minor tick num=1,xmin="+str(xmin-1)+",xmax="+str(xmax+1)+",ymin="+str(ymin-1)+",ymax="+str(ymax+1)+",axis x line=center,axis y line = center]"
+    if f:
+        txt+="\\addplot[domain="+str(xmin)+":"+str(xmax)+",thick,color=blue,samples=200]{"+f+"};"
+        txt+="\\draw[blue] ("+str(xf)+","+str(yf)+") node {\\large $\\mathscr{C}_f$};"
+    if g:
+        txt+="\\addplot[domain="+str(xmin)+":"+str(xmax)+",thick,color=magenta,samples=200]{"+g+"};"
+        txt+="\\draw[magenta] ("+str(xg)+","+str(yg)+") node {\\large $\\mathscr{C}_g$};"
+    if h:
+        txt+="\\addplot[domain="+str(xmin)+":"+str(xmax)+",thick,color=green,samples=200]{"+h+"};"
+        txt+="\\draw[green] ("+str(xh)+","+str(yh)+") node {\\large $\\mathscr{C}_h$};"
+    if k:
+        txt+="\\addplot[domain="+str(xmin)+":"+str(xmax)+",thick,color=olive,samples=200]{"+k+"};"
+        txt+="\\draw[olive] ("+str(xk)+","+str(yk)+") node {\\large $\\mathscr{C}_k$};"
+
+    txt+="\\end{axis}"
+    txt+="\\end{tikzpicture}"
+    return txt
+    
+def trace_fonction(f,xmin,xmax,ymin,ymax):
+    f1=sympify(f)
+    txt="\\begin{tikzpicture}"
+    txt+="\\begin{axis}[enlarge x limits=false,grid=both,minor tick num=1,xmin="+str(xmin-1)+",xmax="+str(xmax+1)+",ymin="+str(ymin-1)+",ymax="+str(ymax+1)+",axis x line=center,axis y line = center]"
+    txt+="\\addplot[domain="+str(xmin)+":"+str(xmax)+",thick,color=blue,samples=200]{"+f+"};"
+    txt+="\\end{axis}"
+    txt+="\\end{tikzpicture}"
+    return txt
+
+\end{pycode}

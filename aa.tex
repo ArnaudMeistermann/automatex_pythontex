@@ -1,0 +1,64 @@
+\include{preambule}
+\begin{document}
+\include{automatex_formate}
+\include{automatex_alg}
+\include{automatex_ana}
+\maketitle
+\enableopenany
+\tableofcontents
+
+
+\chapter{automatex\_alg}
+\section{Équation et inéquation du 1er degré}
+\pyv{equation_degre1(gauche,droite,symbole)} permet de résoudre des équations et inéquations du premier degré. La fonction renvoie une liste. Le premier élément correspond à la résolution et le deuxième à l'ensemble solution.
+\sol{
+\textbf{Exemple 1} : \pyv{equation_degre1("5x+3","x+2","=")[0]} et \pyv{[1]}
+\begin{multicols*}{2}
+\py{equation_degre1("5x+3","x+2","=")[0]}\newpage
+\py{equation_degre1("5x+3","x+2","=")[1]}
+\end{multicols*}
+\textbf{Exemple 2} : \pyv{equation_degre1("1t+3","5t-1",">=")[0]} et \pyv{[1]}
+\begin{multicols*}{2}
+\py{equation_degre1("1t+3","5t-1",">=")[0]}\newpage
+\py{equation_degre1("1t+3","5t-1",">=")[1]}
+\end{multicols*}
+}
+\section{Ensemble solution d'une inéquation}
+\pyv{sol_ineq(ineq)} renvoie une liste dont la première valeur est la phrase \textit{"l'ensemble solution de l'inéquation...est "} et la deuxième valeur est l'ensemble solution.
+\sol{
+\textbf{Exemple 1}:\pyv{sol_ineq("5x+1>x+2")[0]} et \pyv{[1]}\\
+ \py{sol_ineq("5*x+1>x+2")[0]}\py{sol_ineq("5*x+1>x+2")[1]} \\ 
+ \textbf{Exemple 2}:\pyv{sol_ineq("x^2+3x+1>x-2")[0]} et \pyv{[1]}\\
+ \py{sol_ineq("x^2+3x+1>x+2")[0]}\py{sol_ineq("x^2+3x+1>x+2")[1]} 
+ }
+ 
+\section{Tableau de signe d'un produit de 2 fonctions affines}
+\pyv{tableau_signe_produit(f1,f2)} permet de tracer le tableau de signe du produit de deux fonctions affines f1 et f2
+\sol{
+\textbf{Exemple :}  \pyv{ tableau_signe_produit("5x-2","-2x+3")}\\
+\py{tableau_signe_produit("5x-2","-2x+3")}
+}
+\section{Tableau de signe d'un quotient de 2 fonctions affines}
+\pyv{tableau_signe_quotient(f1,f2)} permet de tracer le tableau de signe du quotient de deux fonctions affines f1 et f2
+\sol{
+\textbf{Exemple : } \pyv{tableau_signe_quotient("5x-2","-2x+3")}\\
+\py{tableau_signe_quotient("5x-2","-2x+3")}
+}
+
+\section{Inéquation produit de 2 fonctions affines}
+\pyv{ineq_produit(f1,f2,symbole)} permet de résoudre les inéquation produit nul de deux fonctions affines à l'aide d'un tableau de signe.
+\sol{
+\textbf{Exemple : } \pyv{ineq_produit("5x-2","-2x+3",">")}\\
+\py{ineq_produit("5x-2","-2x+3",">")}
+}
+\section{Inéquation quotient de 2 fonctions affines}
+\pyv{ineq_quotient(f1,f2,symbole)} permet de résoudre les inéquation quotient nul de deux fonctions affines à l'aide d'un tableau de signe.
+\sol{
+\textbf{Exemple :}  \pyv{ineq_quotient("5x-2","-2x+3,"<=")}\\
+\py{ineq_quotient("5x-2","-2x+3","<=")}
+}
+
+\chapter{automatex\_ana}
+
+
+\end{document}
