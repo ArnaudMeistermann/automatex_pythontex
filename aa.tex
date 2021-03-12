@@ -3,6 +3,7 @@
 \include{automatex_formate}
 \include{automatex_alg}
 \include{automatex_ana}
+\include{automatex_proba}
 \maketitle
 \enableopenany
 \tableofcontents
@@ -92,7 +93,35 @@ $\left \{\begin{matrix}a1.x+b1.y=c1 \\a2.x+b2.y=c2 \end{matrix}\right.$
 \textbf{Exemple 2 :}\pyv{eq_trinome("x^2+x+1","C")}\\
 \py{eq_trinome("x^2+x+1","C")}
 }
-\chapter{automatex\_ana}
+
+\chapter{Probabilité}
+Pour pouvoir utiliser ces fonctions, il faut avoir écrire \pyv{\include{automatex_formate}} et \pyv{\include{automatex_proba}} après \pyv{\begin{document}}
+
+
+\section{Arbre de probabilité 2x2}
+\pyv{arbre(A1,pA1,A2,pA2,B1,pB1,B2,pB2,B3,pB3,B4,pB4)} permet de dessiner un arbre de probabilité 2x2.
+
+\sol{
+\textbf{Exemple} : \pyv{arbre("A","p","!A","1-p","B","0,1","C","0,9","D","1/4","E","3/4")}\\
+\py{arbre("A","p","!A","1-p","B","0,1","C","0,9","D","1/4","E","3/4")}
+}
+
+\section{Tableau à double entrée}
+\pyv{tableau(A,B,a,b,c,d)} permet de dessiner un tableau à double entrée avec ligne et colonne "Total"\\
+ avec $P(A \cap  B)=a$, $P(\overline A \cap  B)=b$, $P(A \cap \overline B)=c$, $P(\overline A \cap \overline B)=d$ 
+\sol{
+\textbf{Exemple} : \pyv{tableau("A","B",5,3,7,2)}\\
+\py{tableau("A","B",5,3,7,2)}
+}
+
+\section{Diagramme de Venn}
+\pyv{diagramme(A,B,a,b,c,d)} permet de dessiner un diagramme de Venn  \\
+avec $P(A \cap \overline B)=a$, $P(A \cap  B)=b$, $P(\overline A \cap  B)=c$, $P(\overline A \cap \overline B)=d$ 
+\sol{
+\textbf{Exemple} : \pyv{diagramme("A","B",5,3,7,2)}\\
+\py{diagramme("A","B",5,3,7,2)}
+}
+
 
 
 \end{document}

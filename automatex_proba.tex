@@ -1,0 +1,49 @@
+\begin{pycode}
+def tableau(A,B,a,b,c,d):
+    txt="\\begin{tabular}{|c|c|c|c|} \\hline "
+    txt+="  & $"+A+"$ & $\\overline{"+A+"}$ & Total \\\\ \\hline  "
+    txt+="$"+B+"$&"+str(a)+"&"+str(b)+"&"+str(a+b)+"\\\\ \\hline"
+    txt+="$\\overline{"+B+"}$&"+str(c)+"&"+str(d)+"&"+str(c+d)+"\\\\ \\hline"
+    txt+=" Total &"+str(a+c)+"&"+str(b+d)+"&"+str(a+b+c+d)+"\\\\ \\hline"
+    
+    txt+="\\end{tabular}"
+    return txt
+    
+def diagramme(A,B,a,b,c,d):
+	txt="\\begin{tikzpicture}[scale=0.7]"
+	txt+="\\draw[thick,blue,rounded corners=10pt] (-3.5,-2) rectangle (3,2);"
+	txt+="\\draw[thick,blue] (3,.7) --++(2,1) node[ right]{$\Omega$};"
+	txt+="\\draw[thick,orange,rounded corners=30pt] (-2.5,-1.5) rectangle (0.5,1.7);"
+	txt+="\\draw[thick,orange] (-2.5,.7)--++(-2,1) node[ left]{$A$};"
+	txt+="\\draw[thick,violet,rounded corners=30pt] (-0.5,-1.5) rectangle (2.5,1.7);"
+	txt+="\\draw[thick,violet] (2.5,0)--++(2,-1) node[ right]{$B$};"
+	txt+="\\draw[blue] (-3,-1) node[below]{"+str(d)+"}; "
+	txt+="\\draw[orange] (-1.5,0) node{"+str(a)+"}; "
+	txt+="\\draw (0,0) node{"+str(b)+"}; "
+	txt+="\\draw[violet] (1.5,0) node{"+str(c)+"}; "
+	
+
+	txt+="\\end{tikzpicture}"
+	return txt
+	
+def arbre(A1,pA1,A2,pA2,B1,pB1,B2,pB2,B3,pB3,B4,pB4):
+    L=[A1,A2,B1,B2,B3,B4]
+    for i in range(len(L)):
+        if L[i]!="" and L[i][0]=="!":
+            L[i]="$\\overline{"+L[i][1:]+"}$"
+    A1,A2,B1,B2,B3,B4=L[0],L[1],L[2],L[3],L[4],L[5]
+
+    txt="$\\begin{tikzpicture}[level 1/.style={level distance=2.5cm,sibling distance=3cm},"
+    txt+="level 2/.style={level distance=2.5cm,sibling distance=1.5cm}]"
+    txt+="\\node {} [grow=right]"
+    txt+="child{node {"+A2+"}"
+    txt+="child {node {"+B4+"}edge from parent node[below] {$"+pB4+"$}}"
+    txt+="child {node {"+B3+"} edge from parent node[above] {$"+pB3+"$}}"
+    txt+="edge from parent node[below] {$"+pA2+"$}  }"
+    txt+="child{node {"+A1+"}"
+    txt+="child {node {"+B2+"}edge from parent node[below] {$"+pB2+"$}}"
+    txt+="child {node {"+B1+"}edge from parent node[above] {$"+pB1+"$}}"
+    txt+="edge from parent node[above] {$"+pA1+"$}}"
+    txt+=";\\end{tikzpicture}$"
+    return txt
+\end{pycode}
