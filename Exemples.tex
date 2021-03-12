@@ -1,0 +1,127 @@
+\include{preambule}
+\begin{document}
+\include{automatex_formate}
+\include{automatex_alg}
+\include{automatex_ana}
+\include{automatex_proba}
+\maketitle
+\enableopenany
+\tableofcontents
+
+
+\chapter{Algèbre}
+Pour pouvoir utiliser ces fonctions, il faut avoir écrire \pyv{\include{automatex_formate}} et \pyv{\include{automatex_alg}} après \pyv{\begin{document}}
+\section{Équation et inéquation du 1er degré}
+\pyv{equation_degre1(gauche,droite,symbole)} permet de résoudre des équations et inéquations du premier degré. La fonction renvoie une liste. Le premier élément correspond à la résolution et le deuxième à l'ensemble solution.
+\sol{
+\textbf{Exemple 1} : \pyv{equation_degre1("5x+3","x+2","=")[0]} et \pyv{[1]}
+\begin{multicols*}{2}
+\py{equation_degre1("5x+3","x+2","=")[0]}\newpage
+\py{equation_degre1("5x+3","x+2","=")[1]}
+\end{multicols*}
+\textbf{Exemple 2} : \pyv{equation_degre1("1t+3","5t-1",">=")[0]} et \pyv{[1]}
+\begin{multicols*}{2}
+\py{equation_degre1("1t+3","5t-1",">=")[0]}\newpage
+\py{equation_degre1("1t+3","5t-1",">=")[1]}
+\end{multicols*}
+}
+\section{Ensemble solution d'une inéquation}
+\pyv{sol_ineq(ineq)} renvoie une liste dont la première valeur est la phrase \textit{"l'ensemble solution de l'inéquation...est "} et la deuxième valeur est l'ensemble solution.
+\sol{
+\textbf{Exemple 1}:\pyv{sol_ineq("5x+1>x+2")[0]} et \pyv{[1]}\\
+ \py{sol_ineq("5*x+1>x+2")[0]}\py{sol_ineq("5*x+1>x+2")[1]} \\ 
+ \textbf{Exemple 2}:\pyv{sol_ineq("x^2+3x+1>x-2")[0]} et \pyv{[1]}\\
+ \py{sol_ineq("x^2+3x+1>x+2")[0]}\py{sol_ineq("x^2+3x+1>x+2")[1]} 
+ }
+ 
+\section{Tableau de signe du produit de 2 fonctions affines}
+\pyv{tableau_signe_produit(f1,f2)} permet de tracer le tableau de signe du produit de deux fonctions affines f1 et f2
+\sol{
+\textbf{Exemple :}  \pyv{ tableau_signe_produit("5x-2","-2x+3")}\\
+\py{tableau_signe_produit("5x-2","-2x+3")}
+}
+\section{Tableau de signe du quotient de 2 fonctions affines}
+\pyv{tableau_signe_quotient(f1,f2)} permet de tracer le tableau de signe du quotient de deux fonctions affines f1 et f2
+\sol{
+\textbf{Exemple : } \pyv{tableau_signe_quotient("5x-2","-2x+3")}\\
+\py{tableau_signe_quotient("5x-2","-2x+3")}
+}
+
+\section{Inéquation produit de 2 fonctions affines}
+\pyv{ineq_produit(f1,f2,symbole)} permet de résoudre les inéquation produit nul de deux fonctions affines à l'aide d'un tableau de signe.
+\sol{
+\textbf{Exemple : } \pyv{ineq_produit("5x-2","-2x+3",">")}\\
+\py{ineq_produit("5x-2","-2x+3",">")}
+}
+\section{Inéquation quotient de 2 fonctions affines}
+\pyv{ineq_quotient(f1,f2,symbole)} permet de résoudre les inéquation quotient nul de deux fonctions affines à l'aide d'un tableau de signe.
+\sol{
+\textbf{Exemple :}  \pyv{ineq_quotient("5x-2","-2x+3,"<=")}\\
+\py{ineq_quotient("5x-2","-2x+3","<=")}
+}
+
+\section{Tableau de signe d'une fonction}
+\pyv{tabsigne(f,a,b)} permet de tracer le tableau de signe de la fonction $f$ sur l'intervalle $]a;b[$ 
+\sol{
+\textbf{Exemple 1 :}  \pyv{tabsigne("e^x-2",-10,10)}\\
+\py{tabsigne("e^x-2",-10,10)}\\
+\textbf{Exemple 2 :}  \pyv{tabsigne("x^3",-oo,+oo)}\\
+\py{tabsigne("x^3",-oo,+oo)}
+}
+\section{Résolution d'un système par substitution}
+\pyv{systeme_substi(x,y,a1,b1,c1,a2,b2,c2)} permet de résoudre le système 
+$\left \{\begin{matrix}a1.x+b1.y=c1 \\a2.x+b2.y=c2 \end{matrix}\right.$ en utilisant la méthode par substitution.
+\sol{\textbf{Exemple :} \pyv{systeme_substi("a","b",2,3,4,-4,1,5)}\\
+\begin{multicols}{3}
+\py{systeme_substi("a","b",2,3,4,-4,1,5)}
+\end{multicols}
+
+}
+
+\section{Résolution d'un système par combinaison linéaire}
+\pyv{systeme_combi(x,y,a1,b1,c1,a2,b2,c2)} permet de résoudre le système en utilisant la méthode par combinaison linéaire.
+$\left \{\begin{matrix}a1.x+b1.y=c1 \\a2.x+b2.y=c2 \end{matrix}\right.$
+\sol{\textbf{Exemple :} \pyv{systeme_combi("x","y",2,3,4,-4,1,5)}\\
+\begin{multicols}{3}
+\py{systeme_combi("x","y",2,3,4,-4,1,5)}
+\end{multicols}
+}
+\section{Résolution d'équation du second degré}
+\pyv{eq_trinome(p,ensemble)} permet de résoudre une équation du second degré en calculant le discriminant. Si ensemble='R', on travaille dans $\mathbb{R}$ et si ensemble='C', on travaille dans $\mathbb{C}$
+\sol{\textbf{Exemple 1 :} \pyv{eq_trinome("2*x^2+3x+1","R")}\\
+\py{eq_trinome("2*x^2+3x+1","R")}\\
+\textbf{Exemple 2 :}\pyv{eq_trinome("x^2+x+1","C")}\\
+\py{eq_trinome("x^2+x+1","C")}
+}
+
+\chapter{Probabilité}
+Pour pouvoir utiliser ces fonctions, il faut avoir écrire \pyv{\include{automatex_formate}} et \pyv{\include{automatex_proba}} après \pyv{\begin{document}}
+
+
+\section{Arbre de probabilité 2x2}
+\pyv{arbre(A1,pA1,A2,pA2,B1,pB1,B2,pB2,B3,pB3,B4,pB4)} permet de dessiner un arbre de probabilité 2x2.
+
+\sol{
+\textbf{Exemple} : \pyv{arbre("A","p","!A","1-p","B","0,1","C","0,9","D","1/4","E","3/4")}\\
+\py{arbre("A","p","!A","1-p","B","0,1","C","0,9","D","1/4","E","3/4")}
+}
+
+\section{Tableau à double entrée}
+\pyv{tableau(A,B,a,b,c,d)} permet de dessiner un tableau à double entrée avec ligne et colonne "Total"\\
+ avec $P(A \cap  B)=a$, $P(\overline A \cap  B)=b$, $P(A \cap \overline B)=c$, $P(\overline A \cap \overline B)=d$ 
+\sol{
+\textbf{Exemple} : \pyv{tableau("A","B",5,3,7,2)}\\
+\py{tableau("A","B",5,3,7,2)}
+}
+
+\section{Diagramme de Venn}
+\pyv{diagramme(A,B,a,b,c,d)} permet de dessiner un diagramme de Venn  \\
+avec $P(A \cap \overline B)=a$, $P(A \cap  B)=b$, $P(\overline A \cap  B)=c$, $P(\overline A \cap \overline B)=d$ 
+\sol{
+\textbf{Exemple} : \pyv{diagramme("A","B",5,3,7,2)}\\
+\py{diagramme("A","B",5,3,7,2)}
+}
+
+
+
+\end{document}
